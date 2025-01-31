@@ -3,7 +3,7 @@ import time
 import cv2
 import numpy as np
 
-key_skip = "z"
+key_skip = "shift"
 endroit_a_check = (277, 250, 365, 279) # (X, Y, Largeur, Hauteur)
 starter_reference = cv2.imread("pokemon.png", cv2.IMREAD_GRAYSCALE)
 
@@ -26,6 +26,15 @@ def is_starter_screen_visible():
     screenshot = pyautogui.screenshot(region=endroit_a_check)
     screenshot.save("screenshot.png")
     screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2GRAY)
+
+    # Verif pour ecran noir ou blanc
+    if np.all(screenshot == 0):
+        print("L'écran est tout noir.")
+        return False
+
+    if np.all(screenshot == 255):
+        print("L'écran est tout blanc.")
+        return False
 
     result = cv2.matchTemplate(screenshot, starter_reference, cv2.TM_CCOEFF_NORMED)
     _, max_val, _, _ = cv2.minMaxLoc(result)
@@ -50,6 +59,10 @@ def main():
     time.sleep(5)
 
     while not is_starter_screen_visible():
+        pyautogui.press(key_skip)
+        pyautogui.press(key_skip)
+        pyautogui.press(key_skip)
+        pyautogui.press(key_skip)
         pyautogui.press(key_skip)
         time.sleep(0.5)
     print("réussie")
