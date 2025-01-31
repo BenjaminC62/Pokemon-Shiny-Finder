@@ -25,16 +25,25 @@ def is_starter_screen_visible():
     screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2GRAY)
 
     # Verif pour ecran noir ou blanc
-    if np.all(screenshot == 0 and screenshot == 1 and screenshot == 2 and screenshot == 3):
+    if np.all(screenshot == 0):
         print("L'écran est tout noir.")
         return False
 
-    if np.all(screenshot == 255 and screenshot == 254 and screenshot == 253 and screenshot == 252):
+    if np.all(screenshot == 255):
         print("L'écran est tout blanc.")
         return False
 
+    if np.all(screenshot == 0) or np.all(screenshot == 255):
+        print("L'écran est tout noir ou tout blanc.")
+        return False
+
+
     result = cv2.matchTemplate(screenshot, starter_reference, cv2.TM_CCOEFF_NORMED)
     _, max_val, _, _ = cv2.minMaxLoc(result)
+
+    if max_val == 1:
+        print("L'écran est tout blanc. val 1")
+        return False
 
     print(max_val > 0.8)
     print(max_val)
@@ -96,7 +105,7 @@ def main():
         time.sleep(0.2)
         pyautogui.keyUp("shift")
         print("Voci les sec = ", time.time() - start_time)
-        if time.time() - start_time > 240:
+        if time.time() - start_time > 225:
             pyautogui.keyDown("s")
             time.sleep(2)
             pyautogui.keyUp("s")
