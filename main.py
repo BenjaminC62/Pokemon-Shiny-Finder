@@ -2,6 +2,7 @@ import pyautogui
 import time
 import cv2
 import numpy as np
+from mouseinfo import screenshot
 
 key_skip = "shift"
 endroit_a_check = (277, 250, 365, 279) # (X, Y, Largeur, Hauteur)
@@ -12,14 +13,6 @@ def load_savestate():
     pyautogui.keyDown("shift") # hold shift
     pyautogui.press("f4")
     pyautogui.keyUp("shift")
-
-def get_position():
-    """gets the position of the mouse"""
-    pass
-
-def skip_dialog():
-    """skips all the dialog box """
-    pass
 
 def is_starter_screen_visible():
     """Vérifie si l'écran de sélection du starter est affiché"""
@@ -44,11 +37,25 @@ def is_starter_screen_visible():
 
     return max_val > 0.8
 
+def chose_starter():
+    """chooses the starter pokemon"""
+    pyautogui.keyDown("right")
+    time.sleep(0.1)
+    pyautogui.keyUp("right")
+    pyautogui.keyDown("shift")
+    time.sleep(0.1)
+    pyautogui.keyUp("shift")
+    pyautogui.keyDown("shift")
+    time.sleep(0.1)
+    pyautogui.keyUp("shift")
+    time.sleep(3)
+    pyautogui.keyDown("shift")
+    time.sleep(0.1)
+    pyautogui.keyUp("shift")
 
-def take_screenshot():
-    """takes a screenshot of the screen and saves it to a folder"""
-    pass
-
+def is_shiny():
+    """checks if the pokemon is shiny"""
+    screenshot = pyautogui.screenshot(region=endroit_a_check)
 
 def main():
     """execute the main program, which is a while loop that takes screenshots and saves them to a folder of a non shiny pokemon on the first run
@@ -59,13 +66,14 @@ def main():
     time.sleep(5)
 
     while not is_starter_screen_visible():
-        pyautogui.press(key_skip)
-        pyautogui.press(key_skip)
-        pyautogui.press(key_skip)
-        pyautogui.press(key_skip)
-        pyautogui.press(key_skip)
-        time.sleep(0.5)
-    print("réussie")
+        pyautogui.keyDown("shift")
+        time.sleep(0.2)
+        pyautogui.keyUp("shift")
+
+    time.sleep(5)
+
+    chose_starter()
+
 
 if __name__ == "__main__":
         main()
