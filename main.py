@@ -7,6 +7,7 @@ from mouseinfo import screenshot
 key_skip = "shift"
 endroit_a_check = (277, 250, 365, 279) # (X, Y, Largeur, Hauteur)
 starter_reference = cv2.imread("pokemon.png", cv2.IMREAD_GRAYSCALE)
+game = "https://www.fandesjeux.com/jouer/pokemon-noir"
 
 def load_savestate():
     """loads the savestate of the game"""
@@ -57,11 +58,21 @@ def is_shiny():
     """checks if the pokemon is shiny"""
     screenshot = pyautogui.screenshot(region=endroit_a_check)
 
+def open_firefox_and_game():
+    """Open firefox and type in the search bar the url of the game"""
+    pyautogui.hotkey('win', 'r')
+    time.sleep(1)
+    pyautogui.typewrite('firefox\n')
+    time.sleep(2)
+    pyautogui.typewrite(game + '\n')
+
 def main():
     """execute the main program, which is a while loop that takes screenshots and saves them to a folder of a non shiny pokemon on the first run
     then it will compare the screenshots to the original image to see if the pokemon is shiny or not, then repeat the process if the pokemon is not shiny"""
     #load_savestate()
     # Cheat shiny 521A96D0 1C221C39
+
+    open_firefox_and_game()
 
     time.sleep(5)
 
