@@ -6,15 +6,19 @@ import cv2
 import numpy as np
 import platform
 import locale
+
 from mouseinfo import screenshot
 from pyautogui import press
 
 key_skip = "shift"
 endroit_a_check = (277, 250, 365, 279) # (X, Y, Largeur, Hauteur)
+endroit_a_check_shiny = (273, 410, 464, 432) # (X, Y, Largeur, Hauteur)
+pokemon_shiny = cv2.imread("tepigShiny.png", cv2.IMREAD_GRAYSCALE)
 starter_reference = cv2.imread("pokemon.png", cv2.IMREAD_GRAYSCALE)
 game = "https://www.fandesjeux.com/jouer/pokemon-noir"
 cord_play = (468,600)
 cord_play_download = (468,820)
+
 
 def load_savestate():
     """loads the savestate of the game"""
@@ -84,7 +88,34 @@ def chose_starter():
 
 def is_shiny():
     """checks if the pokemon is shiny"""
-    screenshot = pyautogui.screenshot(region=endroit_a_check)
+    screenshot = pyautogui.screenshot(region=endroit_a_check_shiny)
+    screenshot.save("screenshot2.png")
+    screenshot = cv2.cvtColor(np.array(screenshot), cv2.COLOR_RGB2GRAY)
+
+    result = cv2.matchTemplate(screenshot, pokemon_shiny, cv2.TM_CCOEFF_NORMED)
+    _, max_val, _, _ = cv2.minMaxLoc(result)
+
+    # Verif pour ecran noir ou blanc
+    if np.all(screenshot == 0):
+        print("L'écran est tout noir.")
+        return False
+
+    if np.all(screenshot == 255):
+        print("L'écran est tout blanc.")
+        return False
+
+    if np.all(screenshot == 0) or np.all(screenshot == 255):
+        print("L'écran est tout noir ou tout blanc.")
+        return False
+
+    if max_val == 1:
+        print("L'écran est tout blanc. val 1")
+        return False
+
+    print(max_val > 0.8)
+    print(max_val)
+
+    return max_val > 0.8
 
 
 def click_play(cord):
@@ -124,18 +155,15 @@ def main():
         time.sleep(0.2)
         pyautogui.keyUp("shift")
         print("Voci les sec = ", time.time() - start_time)
-        if time.time() - start_time > 10:
-            create_savestate()
+        if time.time() - start_time > 225:
             time.sleep(2)
             pyautogui.keyDown("s")
-            time.sleep(444)
+            time.sleep(1)
             pyautogui.keyUp("s")
-
-
+            create_savestate()
+    time.sleep(5)
+    chose_starter()
     time.sleep(5)
 
-    chose_starter()
-
-
 if __name__ == "__main__":
-        main()
+    main()
